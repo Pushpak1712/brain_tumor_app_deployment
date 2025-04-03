@@ -144,6 +144,10 @@ def generate_shap_explanation(image_array, filename):
     
     return shap_path
 
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 @app.route('/')
 def index():
     if current_user.is_authenticated:
@@ -243,10 +247,6 @@ def upload():
     
     return render_template('upload.html')
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 @app.route('/results')
 @login_required
 def results():
@@ -273,4 +273,6 @@ def results():
 if __name__ == '__main__':
     # Create upload folder if it doesn't exist
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    app.run(debug=True, host='0.0.0.0')
+    # For Render.com deployment
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
